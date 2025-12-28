@@ -1,0 +1,16 @@
+package org.example.sbgroup2.services;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.math.BigDecimal;
+
+@Data
+@AllArgsConstructor
+public class DashboardSummaryDTO {
+    private BigDecimal totalPurchase;
+    private BigDecimal totalPaid;
+    private BigDecimal totalDue;
+    private double paidPercent;
+}
+
