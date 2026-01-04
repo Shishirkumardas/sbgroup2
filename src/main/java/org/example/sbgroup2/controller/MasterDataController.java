@@ -39,13 +39,13 @@ public class MasterDataController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Either id or name must be provided");
         }
     }
-    @PostMapping("/customer/{masterId}/form")
-    public MasterData saveCustomerForm(
-            @PathVariable Long masterId,
-            @RequestBody CustomerFormDTO dto
-    ) {
-        return masterDataService.saveCustomerForm(masterId, dto);
-    }
+//    @PostMapping("/customer/submit")
+//    public MasterData saveCustomerForm(
+//            @PathVariable Long masterId,
+//            @RequestBody CustomerFormDTO dto
+//    ) {
+//        return masterDataService.saveCustomerForm(masterId, dto);
+//    }
 
 
     @PutMapping("/{id}")

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
+
 public class Area {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

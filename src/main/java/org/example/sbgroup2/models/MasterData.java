@@ -34,7 +34,8 @@ public class MasterData {
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
 
-    private BigDecimal bkash;
+    private BigDecimal phone;
+    private BigDecimal nid;
     private LocalDate date;
     private BigDecimal purchaseAmount;
     private BigDecimal paidAmount;

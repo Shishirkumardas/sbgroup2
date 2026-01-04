@@ -19,15 +19,18 @@ public class AreaService {
     private MasterDataRepository masterRepo;
 
 
-    public Area updateArea(Long id) {
+    public Area updateArea(Long id, Area updatedArea) {
         Area area = areaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Area not found"));
-        area.setName(area.getName());
-        area.setPurchaseAmount(area.getPurchaseAmount());
-        area.setPaidAmount(area.getPaidAmount());
-        area.setDueAmount(area.getDueAmount());
+
+        area.setName(updatedArea.getName());
+        area.setPurchaseAmount(updatedArea.getPurchaseAmount());
+        area.setPaidAmount(updatedArea.getPaidAmount());
+        area.setDueAmount(updatedArea.getDueAmount());
+
         return areaRepository.save(area);
     }
+
 //    public Area getAreaSummary(long id) {
 //        return areaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Area not found"));
 //    }
@@ -74,6 +77,7 @@ public class AreaService {
         Area area = getAreaById(id);
         areaRepository.delete(area);
     }
+
 
 
 }

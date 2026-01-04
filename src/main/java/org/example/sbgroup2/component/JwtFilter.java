@@ -35,43 +35,43 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws IOException, ServletException {
 
-        String token = Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
-                .filter(c -> c.getName().equals("token"))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
-//        String token = null;
-//        if (request.getCookies() != null) {
-//            for (Cookie cookie : request.getCookies()) {
-//                if ("token".equals(cookie.getName())) {
-//                    token = cookie.getValue();
-//                    break;
-//                }
-//            }
-//        }
+        String token = null;
 
-        if (token != null) {
-            Claims claims = jwtService.parse(token);
-            User user = null;
+        // ✅ READ JWT FROM COOKIE
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                user = userRepo.findById(claims.getSubject()).orElseThrow(() -> new RuntimeException("User not found"));
-            } catch (Exception e) {
-                // Optionally log the error
-                logger.warn("User not found or error: " + e.getMessage());
-            }
+                Claims claims = jwtService.parse(token);
 
-            if (user != null) {
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        user,
-                        null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
-                );
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                User user = userRepo.findById(claims.getSubject())
+                        .orElse(null);
+
+                if (user != null) {
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    user,
+                                    null,
+                                    List.of(new SimpleGrantedAuthority(user.getRole().name()))
+                            );
+
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+
+            } catch (Exception e) {
+                logger.warn("JWT invalid or expired: " + e.getMessage());
             }
-            // If user is null, do not set authentication, so the request continues unauthenticated
         }
 
         filterChain.doFilter(request, response);
     }
+
 }
 

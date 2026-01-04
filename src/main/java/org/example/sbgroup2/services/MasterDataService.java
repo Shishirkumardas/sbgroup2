@@ -3,6 +3,7 @@ package org.example.sbgroup2.services;
 import org.example.sbgroup2.ResourceNotFoundException;
 import org.example.sbgroup2.dto.CustomerFormDTO;
 import org.example.sbgroup2.enums.OrderStatus;
+import org.example.sbgroup2.models.Area;
 import org.example.sbgroup2.models.MasterData;
 import org.example.sbgroup2.repositories.MasterDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,12 @@ public class MasterDataService {
                 .orElseThrow(() -> new ResourceNotFoundException("MasterData not found"));
         masterData.setName(masterDataDetails.getName());
         masterData.setArea(masterDataDetails.getArea());
+        masterData.setPhone(masterDataDetails.getPhone());
+        masterData.setNid(masterDataDetails.getNid());
+
         masterData.setPaymentMethod(masterDataDetails.getPaymentMethod());
-        masterData.setBkash(masterDataDetails.getBkash());
         masterData.setDate(masterDataDetails.getDate());
         masterData.setPurchaseAmount(masterDataDetails.getPurchaseAmount());
-        masterData.setDueAmount(masterDataDetails.getDueAmount());
         masterData.setCashBackAmount(masterDataDetails.getCashBackAmount());
         MasterData saved  = masterDataRepository.save(masterData);
         areaService.recalculateArea(saved.getArea().getId());
@@ -81,14 +83,21 @@ public class MasterDataService {
 
         masterDataRepository.save(masterData);
     }
-    public MasterData saveCustomerForm(Long id, CustomerFormDTO dto) {
-        MasterData md = masterDataRepository.findById(id).orElseThrow();
-
+    public MasterData saveCustomerForm(CustomerFormDTO dto) {
+        MasterData md =  new MasterData();
+        Area area = areaService.getAreaById(dto.getAreaID());
+        md.setArea(area);
         md.setName(dto.getCustomerName());
-        md.setPaymentMethod(dto.getPaymentMethod());
-        md.setPaidAmount(dto.getAmount());
-        md.setDate(dto.getPaymentDate());
+        md.setArea(area);
+        md.setPhone(dto.getPhoneNumber());
+        md.setNid(dto.getNid());
 
+        md.setDate(dto.getPaymentDate());
+        md.setPaymentMethod(dto.getPaymentMethod());
+        md.setPurchaseAmount(dto.getAmount());
+        md.setPaidAmount(dto.getAmount());
+
+        areaService.recalculateArea(area.getId());
         return masterDataRepository.save(md);
     }
 

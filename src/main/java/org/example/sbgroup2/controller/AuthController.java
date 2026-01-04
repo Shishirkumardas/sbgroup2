@@ -20,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3001")
 public class AuthController {
 
     @Autowired
@@ -113,11 +114,9 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
 
-        if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
             return ResponseEntity.status(401).build();
         }
-
-        User user = (User) authentication.getPrincipal();
 
         return ResponseEntity.ok(
                 Map.of(

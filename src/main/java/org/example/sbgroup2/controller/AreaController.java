@@ -21,7 +21,7 @@ public class AreaController {
 
     @GetMapping
     public List<Area> getAll() {
-        return repo.findAll();
+        return areaService.getAllAreas();
     }
 
     @GetMapping("/area")
@@ -42,9 +42,10 @@ public class AreaController {
     }
 
     @PutMapping("/{id}")
-    public Area updateArea(@PathVariable Long id) {
-        return areaService.updateArea(id);
+    public Area updateArea(@PathVariable Long id, @RequestBody Area area) {
+        return areaService.updateArea(id, area);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteArea(@PathVariable Long id) {

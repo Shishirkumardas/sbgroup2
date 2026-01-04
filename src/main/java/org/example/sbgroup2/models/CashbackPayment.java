@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@Table(name = "cashback")
 public class CashbackPayment {
 
     @Id
