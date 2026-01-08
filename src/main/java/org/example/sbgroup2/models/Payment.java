@@ -1,7 +1,7 @@
 package org.example.sbgroup2.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.example.sbgroup2.enums.OrderStatus;
 import org.example.sbgroup2.enums.PaymentMethod;
 import org.example.sbgroup2.enums.PaymentStatus;
@@ -11,6 +11,9 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
 
 
@@ -26,6 +29,7 @@ public class Payment {
     private LocalDate paymentDate;
     @Enumerated(EnumType.STRING)
     private PaymentStatus status = PaymentStatus.PENDING;
+    private String trxId;
 
 
 }

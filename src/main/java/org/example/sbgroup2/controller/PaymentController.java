@@ -6,13 +6,19 @@ import org.example.sbgroup2.dto.PaymentView;
 import org.example.sbgroup2.models.Payment;
 import org.example.sbgroup2.repositories.MasterDataRepository;
 import org.example.sbgroup2.repositories.PaymentRepository;
+import org.example.sbgroup2.services.BkashService;
 import org.example.sbgroup2.services.PaymentService;
 import org.example.sbgroup2.services.PaymentService2;
 import org.example.sbgroup2.services.PaymentServiceImpl;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -25,6 +31,7 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final MasterDataRepository masterDataRepository;
     private final PaymentServiceImpl paymentServiceImpl;
+    private final BkashService bkashService;
 
 //    @GetMapping
 //    public List<Payment> getAll() {
@@ -77,5 +84,63 @@ public class PaymentController {
         return paymentService2.getPayments(id);
     }
 
+//    public Map<String, Object> createPayment(String amount, String orderId) {
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setBearerAuth(bkashService.generateToken());
+//
+//        Map<String, Object> request = Map.of(
+//                "amount", amount,
+//                "currency", "BDT",
+//                "intent", "sale",
+//                "merchantInvoiceNumber", orderId
+//        );
+//
+//        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+//
+//        ResponseEntity<Map> response = restTemplate.postForEntity(
+//                "https://tokenized.sandbox.bka.sh/v1.2.0-beta/checkout/create",
+//                entity,
+//                Map.class
+//        );
+//
+//        return response.getBody();
+//    }
+//
+//    public Map<String, Object> executePayment(String paymentID) {
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setBearerAuth(bkashService.generateToken());
+//
+//        Map<String, Object> request = Map.of(
+//                "paymentID", paymentID
+//        );
+//
+//        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+//
+//        ResponseEntity<Map> response = restTemplate.postForEntity(
+//                "https://tokenized.sandbox.bka.sh/v1.2.0-beta/checkout/execute",
+//                entity,
+//                Map.class
+//        );
+//
+//        return response.getBody();
+//    }
+
+    @GetMapping("/payment/success")
+    public String success(@RequestParam String merchantInvoiceNumber) {
+        paymentService.markPaymentSuccess(merchantInvoiceNumber);
+        return "Payment Successful";
+    }
+
+    @GetMapping("/payment/failed")
+    public String failed(@RequestParam String merchantInvoiceNumber) {
+        paymentService.markPaymentFailed(merchantInvoiceNumber);
+        return "Payment Failed";
+    }
 }
 

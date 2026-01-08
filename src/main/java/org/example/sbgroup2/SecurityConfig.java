@@ -111,6 +111,8 @@ public CorsConfigurationSource corsConfigurationSource() {
                         .requestMatchers("/api/consumers/**").permitAll()
                         .requestMatchers("/api/summary/**").permitAll()
                         .requestMatchers("/api/daily-expenses/**").permitAll()
+                        .requestMatchers("/api/accounts/**").permitAll()
+                        .requestMatchers("/api/calls/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

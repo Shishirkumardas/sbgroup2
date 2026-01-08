@@ -1,5 +1,6 @@
 package org.example.sbgroup2.services;
 
+import jakarta.transaction.Transactional;
 import org.example.sbgroup2.ResourceNotFoundException;
 import org.example.sbgroup2.models.Area;
 import org.example.sbgroup2.models.Area;
@@ -34,7 +35,7 @@ public class AreaService {
 //    public Area getAreaSummary(long id) {
 //        return areaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Area not found"));
 //    }
-
+    @Transactional
     public Area recalculateArea(Long areaId) {
 
         Area area = areaRepository.findById(areaId)
@@ -43,9 +44,12 @@ public class AreaService {
         BigDecimal totalPurchase = masterRepo.sumPurchaseByArea(areaId);
         BigDecimal totalPaid = masterRepo.sumPaidByArea(areaId);
 
-        area.setPurchaseAmount(BigDecimal.valueOf(totalPurchase.intValue()));
-        area.setPaidAmount(BigDecimal.valueOf(totalPaid.intValue()));
-        area.setDueAmount(BigDecimal.valueOf(totalPurchase.subtract(totalPaid).intValue()));
+        totalPurchase = totalPurchase != null ? totalPurchase : BigDecimal.ZERO;
+        totalPaid = totalPaid != null ? totalPaid : BigDecimal.ZERO;
+
+        area.setPurchaseAmount(totalPurchase);
+        area.setPaidAmount(totalPaid);
+        area.setDueAmount(totalPurchase.subtract(totalPaid));
 
         return areaRepository.save(area);
     }

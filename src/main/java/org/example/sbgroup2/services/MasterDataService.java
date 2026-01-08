@@ -1,5 +1,6 @@
 package org.example.sbgroup2.services;
 
+import jakarta.transaction.Transactional;
 import org.example.sbgroup2.ResourceNotFoundException;
 import org.example.sbgroup2.dto.CustomerFormDTO;
 import org.example.sbgroup2.enums.OrderStatus;
@@ -44,6 +45,8 @@ public class MasterDataService {
         masterData.setPurchaseAmount(masterDataDetails.getPurchaseAmount());
         masterData.setCashBackAmount(masterDataDetails.getCashBackAmount());
         MasterData saved  = masterDataRepository.save(masterData);
+//        areaService.recalculateArea(saved.getArea().getId());
+        areaService.recalculateArea(masterData.getArea().getId());
         areaService.recalculateArea(saved.getArea().getId());
         return saved;
     }
@@ -83,6 +86,7 @@ public class MasterDataService {
 
         masterDataRepository.save(masterData);
     }
+    @Transactional
     public MasterData saveCustomerForm(CustomerFormDTO dto) {
         MasterData md =  new MasterData();
         Area area = areaService.getAreaById(dto.getAreaID());
@@ -97,8 +101,10 @@ public class MasterDataService {
         md.setPurchaseAmount(dto.getAmount());
         md.setPaidAmount(dto.getAmount());
 
+        MasterData saved = masterDataRepository.save(md);
         areaService.recalculateArea(area.getId());
-        return masterDataRepository.save(md);
+        return saved;
+
     }
 
 }

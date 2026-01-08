@@ -42,11 +42,17 @@ public interface DailyExpenseRepository extends JpaRepository<DailyExpense, Long
 
     List<DailyExpense> findByDateGreaterThanEqualOrderByDateAscIdAsc(LocalDate date);
 
+//    // First row opening balance (ordered by id asc)
+//    @Query("SELECT d.openingBalance FROM DailyExpense d ORDER BY d.id ASC")
+//    Optional<DailyExpense> findFirstOpeningBalance();
+//
+//    // Last row running balance (ordered by id desc)
+//    @Query("SELECT d.runningBalance FROM DailyExpense d ORDER BY d.id DESC")
+//    Optional<DailyExpense> findLastRunningBalance();
+
     // First row opening balance (ordered by id asc)
-    @Query("SELECT d.openingBalance FROM DailyExpense d ORDER BY d.id ASC")
-    Optional<BigDecimal> findFirstOpeningBalance();
+    Optional<DailyExpense> findFirstByOrderByIdAsc();
 
     // Last row running balance (ordered by id desc)
-    @Query("SELECT d.runningBalance FROM DailyExpense d ORDER BY d.id DESC")
-    Optional<BigDecimal> findLastRunningBalance();
+    Optional<DailyExpense> findFirstByOrderByIdDesc();
 }

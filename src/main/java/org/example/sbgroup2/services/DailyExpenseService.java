@@ -1,6 +1,9 @@
 package org.example.sbgroup2.services;
 
 import jakarta.transaction.Transactional;
+import org.example.sbgroup2.dto.AccounceFormDTO;
+import org.example.sbgroup2.dto.CustomerFormDTO;
+import org.example.sbgroup2.models.Area;
 import org.example.sbgroup2.models.DailyExpense;
 import org.example.sbgroup2.models.MasterData;
 import org.example.sbgroup2.repositories.DailyExpenseRepository;
@@ -96,11 +99,15 @@ public class DailyExpenseService {
     }
 
     public BigDecimal getFirstOpeningBalance() {
-        return repository.findFirstOpeningBalance().orElse(BigDecimal.ZERO);
+//        return repository.findFirstOpeningBalance().orElse(BigDecimal.ZERO);
+        Optional<DailyExpense> firstExpenseOpt = repository.findFirstByOrderByIdAsc();
+        return firstExpenseOpt.map(DailyExpense::getOpeningBalance).orElse(BigDecimal.ZERO);
     }
 
     public BigDecimal getLastRunningBalance() {
-        return repository.findLastRunningBalance().orElse(BigDecimal.ZERO);
+//        return repository.findLastRunningBalance().orElse(BigDecimal.ZERO);
+        Optional<DailyExpense> lastExpenseOpt = repository.findFirstByOrderByIdDesc();
+        return lastExpenseOpt.map(DailyExpense::getRunningBalance).orElse(BigDecimal.ZERO);
     }
 
 
@@ -202,6 +209,20 @@ public class DailyExpenseService {
         }
 
         repository.saveAll(list);
+    }
+
+    public DailyExpense saveAccounceForm(AccounceFormDTO dto) {
+        DailyExpense de = new DailyExpense();
+
+        de.setName(dto.getName());
+        de.setExpenseHead(dto.getExpenseHead());
+        de.setExpenseAmount(dto.getExpenseAmount());
+        de.setDate(LocalDate.now());
+        de.setCashIn(BigDecimal.ZERO);
+        de.setCashOut(BigDecimal.ZERO);
+        de.setRemarks("From Accounts Form");
+
+        return repository.save(de);
     }
 
 
