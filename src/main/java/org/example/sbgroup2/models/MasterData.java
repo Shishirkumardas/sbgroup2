@@ -48,6 +48,7 @@ public class MasterData {
     private String remarks;
     public boolean PaymentCompleted;
     private BigDecimal amountBackFromPurchase;
+    private LocalDate nextDueDate;
 
     @PrePersist
     @PreUpdate

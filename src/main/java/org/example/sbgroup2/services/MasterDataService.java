@@ -30,6 +30,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MasterDataService {
@@ -37,6 +38,8 @@ public class MasterDataService {
     private MasterDataRepository masterDataRepository;
     @Autowired
     private AreaService areaService;
+    @Autowired
+    private CashbackService cashbackService;
     private CashbackPaymentRepository cashbackPaymentRepository;
 
     public MasterData create(MasterData data) {
@@ -51,6 +54,39 @@ public class MasterDataService {
 
         return saved;
     }
+
+//    public List<CashbackDetailsDTO> getMasterDataByNextDueDate(LocalDate nextDueDate) {
+//        // 1. fetch all master data
+//        List<MasterData> allMasters = masterDataRepository.findAll();
+//
+//        // 2. map each to CashbackDetailsDTO
+//        List<CashbackDetailsDTO> allWithCashback = allMasters.stream()
+//                .map(cashbackService::calculateCashback2)
+//                .collect(Collectors.toList());
+//
+//        // 3. filter by nextDueDate if provided
+//        if (nextDueDate != null) {
+//            return allWithCashback.stream()
+//                    .filter(dto -> dto.getNextDueDate() != null && dto.getNextDueDate().equals(nextDueDate))
+//                    .collect(Collectors.toList());
+//        }
+//
+//        return allWithCashback; // default: return all
+//    }
+//public List<MasterData> getMasterDataByNextDueDate(LocalDate nextDueDate) {
+//    // 1. Fetch all master data
+//    List<MasterData> allMasters = masterDataRepository.findAll();
+//
+//    // 2. Filter by nextDueDate if provided
+//    if (nextDueDate != null) {
+//        return allMasters.stream()
+//                .filter(m -> m.getNextDueDate() != null && m.getNextDueDate().equals(nextDueDate))
+//                .collect(Collectors.toList());
+//    }
+//
+//    // Default: return all
+//    return allMasters;
+//}
 
     public MasterData updateMasterData(Long id, MasterData masterDataDetails) {
         MasterData masterData = masterDataRepository.findById(id)

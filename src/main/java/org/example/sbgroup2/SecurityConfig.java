@@ -39,7 +39,9 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3001")); // ← your Next.js frontend
+        config.setAllowedOrigins(List.of("http://localhost:3001",
+                "http://192.168.68.107:3001",
+                "http://192.168.68.107")); // ← your Next.js frontend
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie")); // useful for debug
@@ -72,6 +74,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/calls/**").permitAll()
                                 .requestMatchers("/api/file-upload/**").permitAll()
                                 .requestMatchers("/api/dashboard/**").permitAll()
+                                .requestMatchers("/api/areas/area-summary/daily").permitAll()
 //                                .requestMatchers(
 //                                        "/api/areas/**",
 //                                "/api/master-data/**",

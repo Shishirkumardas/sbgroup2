@@ -8,8 +8,10 @@ import org.example.sbgroup2.dto.PurchaseView;
 import org.example.sbgroup2.models.MasterData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface MasterDataRepository extends JpaRepository<MasterData, Long> {
@@ -23,11 +25,68 @@ public interface MasterDataRepository extends JpaRepository<MasterData, Long> {
     BigDecimal sumPurchaseByArea(Long areaId);
 
     @Query("""
+        SELECT COALESCE(SUM(m.quantity), 0)
+        FROM MasterData m
+        WHERE m.area.id = :areaId
+    """)
+    BigDecimal sumQuantityByArea(Long areaId);
+
+    @Query("""
+        SELECT COALESCE(SUM(m.amountBackFromPurchase), 0)
+        FROM MasterData m
+        WHERE m.area.id = :areaId
+    """)
+    BigDecimal sumCashbackByArea(Long areaId);
+
+    @Query("""
         SELECT COALESCE(SUM(m.paidAmount), 0)
         FROM MasterData m
         WHERE m.area.id = :areaId
     """)
     BigDecimal sumPaidByArea(Long areaId);
+
+    @Query("SELECT m FROM MasterData m " +
+            "WHERE m.nextDueDate IS NOT NULL " +
+            "AND m.nextDueDate = :maxDueDate " +
+            "ORDER BY m.nextDueDate ASC")
+    List<MasterData> findByNextDueDateLessThanEqual(@Param("maxDueDate") LocalDate maxDueDate);
+
+
+    @Query("""
+    SELECT COALESCE(SUM(m.purchaseAmount), 0) 
+    FROM MasterData m 
+    WHERE m.area.id = :areaId 
+    AND m.date = :date
+""")
+    BigDecimal sumPurchaseByAreaAndDate(
+            @Param("areaId") Long areaId,
+            @Param("date") LocalDate date
+    );
+
+    @Query("""
+    SELECT COALESCE(SUM(m.quantity), 0) 
+    FROM MasterData m 
+    WHERE m.area.id = :areaId 
+    AND m.date = :date
+""")
+    BigDecimal sumQuantityByAreaAndDate(
+            @Param("areaId") Long areaId,
+            @Param("date") LocalDate date
+    );
+
+    @Query("""
+    SELECT COALESCE(SUM(m.amountBackFromPurchase), 0) 
+    FROM MasterData m 
+    WHERE m.area.id = :areaId 
+    AND m.date = :date
+""")
+    BigDecimal sumCashbackByAreaAndDate(
+            @Param("areaId") Long areaId,
+            @Param("date") LocalDate date
+    );
+
+
+
 
 
     /* ===============================

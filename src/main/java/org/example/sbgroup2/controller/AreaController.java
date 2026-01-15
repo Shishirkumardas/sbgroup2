@@ -5,12 +5,14 @@ import org.example.sbgroup2.models.Area;
 
 import org.example.sbgroup2.repositories.AreaRepository;
 import org.example.sbgroup2.services.AreaService;
+import org.example.sbgroup2.services.AreaSummaryDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 @RestController
 @RequestMapping("/api/areas")
@@ -23,6 +25,12 @@ public class AreaController {
     @GetMapping
     public List<Area> getAll() {
         return areaService.getAllAreas();
+    }
+
+    @GetMapping("/area-summary/daily")
+    public List<AreaSummaryDTO> getDailySummary(
+            @RequestParam LocalDate date) {
+        return areaService.getDailyAreaSummary(date);
     }
 
     @GetMapping("/area")

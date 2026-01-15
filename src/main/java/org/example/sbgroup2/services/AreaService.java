@@ -5,12 +5,15 @@ import org.example.sbgroup2.ResourceNotFoundException;
 import org.example.sbgroup2.models.Area;
 import org.example.sbgroup2.models.Area;
 import org.example.sbgroup2.repositories.AreaRepository;
+import org.example.sbgroup2.repositories.CashbackPaymentRepository;
 import org.example.sbgroup2.repositories.MasterDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AreaService {
@@ -18,6 +21,8 @@ public class AreaService {
     private AreaRepository areaRepository;
     @Autowired
     private MasterDataRepository masterRepo;
+    @Autowired
+    private CashbackPaymentRepository cashbackRepo;
 
 
     public Area updateArea(Long id, Area updatedArea) {
@@ -28,6 +33,8 @@ public class AreaService {
         area.setPurchaseAmount(updatedArea.getPurchaseAmount());
         area.setPaidAmount(updatedArea.getPaidAmount());
         area.setDueAmount(updatedArea.getDueAmount());
+        area.setCashbackAmount(updatedArea.getCashbackAmount());
+        area.setPackageQuantity(updatedArea.getPackageQuantity());
 
         return areaRepository.save(area);
     }
@@ -43,13 +50,17 @@ public class AreaService {
 
         BigDecimal totalPurchase = masterRepo.sumPurchaseByArea(areaId);
         BigDecimal totalPaid = masterRepo.sumPaidByArea(areaId);
+        BigDecimal totalQuantity = masterRepo.sumQuantityByArea(areaId);
+        BigDecimal totalCashback = cashbackRepo.sumCashbackByArea(areaId);
 
         totalPurchase = totalPurchase != null ? totalPurchase : BigDecimal.ZERO;
         totalPaid = totalPaid != null ? totalPaid : BigDecimal.ZERO;
 
         area.setPurchaseAmount(totalPurchase);
         area.setPaidAmount(totalPaid);
-        area.setDueAmount(totalPurchase.subtract(totalPaid));
+        area.setDueAmount(totalPurchase.subtract(totalCashback));
+        area.setCashbackAmount(totalCashback);
+        area.setPackageQuantity(totalQuantity);
 
         return areaRepository.save(area);
     }
@@ -58,8 +69,39 @@ public class AreaService {
         return recalculateArea(areaId);
     }
 
+    public List<AreaSummaryDTO> getDailyAreaSummary(LocalDate date) {
+
+        List<Area> areas = areaRepository.findAll();
+
+        return areas.stream().map(area -> {
+            Long areaId = area.getId();
+
+            BigDecimal totalPurchase = masterRepo.sumPurchaseByAreaAndDate(areaId, date);
+            BigDecimal totalQuantity = masterRepo.sumQuantityByAreaAndDate(areaId, date);
+            BigDecimal totalCashback = cashbackRepo.sumCashbackByAreaAndDate(areaId, date);
+            Long cashbackQuantity = cashbackRepo.countCashbackByAreaAndDate(areaId, date);
+
+            totalPurchase = totalPurchase != null ? totalPurchase : BigDecimal.ZERO;
+            totalQuantity = totalQuantity != null ? totalQuantity : BigDecimal.ZERO;
+            totalCashback = totalCashback != null ? totalCashback : BigDecimal.ZERO;
+            cashbackQuantity = cashbackQuantity != null ? cashbackQuantity : 0L;
+
+            return new AreaSummaryDTO(
+                    areaId,
+                    area.getName(),
+                    totalPurchase,
+                    totalQuantity,
+                    totalCashback,
+                    cashbackQuantity
+            );
+        }).collect(Collectors.toList());
+    }
+
+
     public List<Area> getAllAreas() {
-        return areaRepository.findAll();
+        List<Area> areas = areaRepository.findAll();
+
+        return areas.stream().map(area -> recalculateArea(area.getId())).collect(Collectors.toList());
     }
 
     public Area getAreaById(Long id) {
@@ -85,6 +127,8 @@ public class AreaService {
             area.setPurchaseAmount(BigDecimal.ZERO);
             area.setPaidAmount(BigDecimal.ZERO);
             area.setDueAmount(BigDecimal.ZERO);
+            area.setCashbackAmount(BigDecimal.ZERO);
+            area.setPackageQuantity(BigDecimal.ZERO);
 
             area = areaRepository.save(area);
         }

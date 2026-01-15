@@ -5,6 +5,7 @@ import org.example.sbgroup2.dto.CashbackDetailsDTO;
 import org.example.sbgroup2.models.CashbackPayment;
 import org.example.sbgroup2.models.MasterData;
 import org.example.sbgroup2.repositories.CashbackPaymentRepository;
+import org.example.sbgroup2.repositories.MasterDataRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import java.util.Objects;
 public class CashbackService {
 
     private final CashbackPaymentRepository cashbackRepo;
+    private final MasterDataRepository masterDataRepository;
 
 //    public CashbackDetailsDTO calculateCashback(MasterData master) {
 //
@@ -127,6 +129,8 @@ public class CashbackService {
             // Next month after last payment
             nextDueDate = lastPaidDate.plusMonths(1);
         }
+        master.setNextDueDate(nextDueDate);
+        masterDataRepository.save(master);
 
         // 5. Missed count & amount (only count months that are past due)
         long missedCount = Math.max(0, expectedPaymentsCount - actualPaidCount);

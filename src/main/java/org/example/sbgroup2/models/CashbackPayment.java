@@ -21,4 +21,6 @@ public class CashbackPayment {
     private LocalDate paymentDate;
 
     private BigDecimal amount;
+
+
 }

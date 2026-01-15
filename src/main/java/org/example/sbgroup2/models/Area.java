@@ -17,6 +17,9 @@ public class Area {
 
     private String name;
 
+    private BigDecimal CashbackAmount;
+    private BigDecimal PackageQuantity;
+
     private BigDecimal purchaseAmount;
     private BigDecimal paidAmount;
     private BigDecimal dueAmount;

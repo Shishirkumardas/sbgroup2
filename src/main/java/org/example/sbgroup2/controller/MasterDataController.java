@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 @RestController
 @RequestMapping("/api/master-data")
@@ -28,7 +29,6 @@ public class MasterDataController {
 
     @GetMapping
     public List<MasterData> getAll() {
-
         return repo.findAll();
     }
 
@@ -51,6 +51,13 @@ public class MasterDataController {
 //        return masterDataService.saveCustomerForm(masterId, dto);
 //    }
 
+//    @GetMapping("/by-next-due")
+//    public List<MasterData> getByNextDue(
+//            @RequestParam(required = true) String maxDueDate
+//    ) {
+//        LocalDate date = LocalDate.parse(maxDueDate);
+//        return masterDataService.getMasterDataByNextDueDate(date);
+//    }
 
     @PutMapping("/{id}")
     public MasterData updateMasterData(@PathVariable Long id, @RequestBody MasterData masterData) {
