@@ -90,17 +90,17 @@ public class SecurityConfig {
 
                         // Protected but needs authentication
                         .requestMatchers("/api/auth/me").authenticated()
-                        .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
+//                        .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
 
 
                         // For development – you can tighten later
                         .requestMatchers(
-                                "/api/areas/**",
+//                                "/api/areas/**",
                                 "/api/master-data/**",
 //                                "/api/customer/**",
 //                                "/api/customer/submit",
                                 "/api/cashback/**",
-                                "/api/payments/**",
+//                                "/api/payments/**",
                                 "/api/consumers/**",
                                 "/api/summary/**",
                                 "/api/daily-expenses/**",
@@ -111,6 +111,10 @@ public class SecurityConfig {
                                 "/api/dashboard/summary",
                                 "/api/areas/area-summary/daily"
                         ).hasRole("ADMIN")
+                        .requestMatchers("/api/areas/area").permitAll()
+                        .requestMatchers("/api/payments/**").permitAll()
+                        .requestMatchers("/api/customer/payment-methods").permitAll()
+                        .requestMatchers("/api/areas").permitAll()
 
                         // Everything else requires authentication
                         .anyRequest().authenticated()
